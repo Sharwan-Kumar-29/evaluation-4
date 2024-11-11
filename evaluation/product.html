@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href=".\index.css">
+    <title>Product Store</title>
+   <style>
+    @media (max-width:845px){
+        #filters{
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+        }
+        #sort-options{
+            width: 2%;
+        }
+    }
+    @media (max-width:440px){
+        #filters{
+            display: grid;
+            grid-template-columns: repeat(1,1fr);
+        }
+        #sort-options{
+            width: 2%;
+        }
+    }
+
+    #suggestions {
+        border: 1px solid #ddd;
+        max-height: 150px;
+        overflow-y: auto;
+        display: none;
+        position: absolute;
+        background-color: white;
+        width: 200px;
+        z-index: 10;
+    }
+    .suggestion-item {
+        padding: 8px;
+        cursor: pointer;
+    }
+    .suggestion-item:hover {
+        background-color: #f0f0f0;
+    }
+   </style>
+</head>
+<body >
+    <header>
+        <h1>Product Store</h1>
+        <div id="cart"> <a href="cart.html"><img src="carts.png" alt="" ></a>
+             (<span id="cart-count">0</span>)
+        </div>
+        <div id="filters">
+            
+            <input type="text" id="search" placeholder="Search items..." />
+            <div id="suggestions"></div>
+            <select id="category-filter">
+                <option value="">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Wearables">Wearables</option>
+                <option value="Home & Kitchen">Home & Kitchen</option>
+            </select>
+            <input type="number" id="min-price" placeholder="Min Price" />
+            <input type="number" id="max-price" placeholder="Max Price" />
+            <button id="filter-button">Filter</button>
+        </div>
+        <div id="sort-options">
+            <select id="sort-by">
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="name-asc">Name: A to Z</option>
+                <option value="name-desc">Name: Z to A</option>
+            </select>
+        </div>
+    </header>
+
+    <div id="product-container"></div>
+
+    
+</body>
+<script src=".\data.js"></script>
+<script src=".\script.js"></script>
+<script>
+    let debounceTimeout;
+        
+        
+        const items = [
+            'Wireless Bluetooth Headphones', 
+            'Smartphone with 128GB Storage', 
+            '4K Ultra HD Smart TV', 
+            'Gaming Laptop',
+            'Fitness Smartwatch', 
+            'Portable Bluetooth Speaker',
+            'Stainless Steel Water Bottle', 
+            'Ergonomic Office Chair', 
+            'Wireless Charging Pad', 
+            'Action Camera 4K',
+            'Noise-Cancelling Headphones',
+            'Smart Thermostat',
+            'Mechanical Gaming Keyboard',
+            'Fitness Tracker with Heart Rate Monitor',
+            'LED Desk Lamp with USB Charging Port',
+            'Air Purifier for Home',
+            'Digital Photo Frame',
+            'Wireless Earbuds with Charging Case',
+            "Electric Standing Desk",
+            'Stainless Steel Cookware'
+        ];
+
+        // Function to handle the input event
+        function handleSearchInput(event) {
+            const query = event.target.value.trim();
+            if (query === '') {
+                clearSuggestions();
+                return;
+            }
+
+            // Call the API or filter the items after debounce delay
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(() => {
+                // Show filtered suggestions
+                const filteredItems = filterItems(query);
+                showSuggestions(filteredItems);
+            }, 500); // 500ms debounce delay
+        }
+
+        // Function to filter items based on the query
+        function filterItems(query) {
+            return items.filter(item => 
+                item.toLowerCase().includes(query.toLowerCase())
+            );
+        }
+
+        // Function to display suggestions in the dropdown
+        function showSuggestions(suggestions) {
+            const suggestionsDiv = document.getElementById('suggestions');
+            suggestionsDiv.innerHTML = '';
+
+            if (suggestions.length === 0) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+
+            suggestions.forEach(suggestion => {
+                const div = document.createElement('div');
+                div.classList.add('suggestion-item');
+                div.textContent = suggestion;
+                div.onclick = () => handleSuggestionClick(suggestion);
+                suggestionsDiv.appendChild(div);
+            });
+
+            suggestionsDiv.style.display = 'block';
+        }
+
+        // Function to handle suggestion click
+        function handleSuggestionClick(suggestion) {
+            document.getElementById('search').value = suggestion;
+            clearSuggestions(); // Hide the suggestions after selection
+        }
+
+        // Function to clear suggestions from the dropdown
+        function clearSuggestions() {
+            const suggestionsDiv = document.getElementById('suggestions');
+            suggestionsDiv.innerHTML = '';
+            suggestionsDiv.style.display = 'none';
+        }
+
+        // Attach event listener to the input field
+        document.getElementById('search').addEventListener('input', handleSearchInput);
+</script>
+</html>
+
+  
+
+  
